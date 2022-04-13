@@ -161,10 +161,11 @@ namespace MycharMod.SkillStates
         {
             var position = transform.position;
             hitsUp =
-                Physics.RaycastAll(position + direction * length, -direction, length)
+                Physics.RaycastAll(position + direction * length, -direction, length, ~0,
+                        QueryTriggerInteraction.Ignore)
                     .Where(hit => hit.transform.name != "MainHurtbox" && !hit.transform.name.Contains("HenryBody"))
                     .ToArray();
-            hitsUpR = Physics.RaycastAll(position, direction, length)
+            hitsUpR = Physics.RaycastAll(position, direction, length, ~0, QueryTriggerInteraction.Ignore)
                 .Where(hit => hit.transform.name != "MainHurtbox" && !hit.transform.name.Contains("HenryBody"))
                 .ToArray();
         }
