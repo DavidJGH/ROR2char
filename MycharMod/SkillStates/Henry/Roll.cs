@@ -111,13 +111,14 @@ namespace MycharMod.SkillStates
             while (!succeeded)
             {
                 float length = 20f;
-                ShootRaycastsToAndFrom(length, Vector3.up, out RaycastHit[] hitsUp, out RaycastHit[] hitsUpR);
-                ShootRaycastsToAndFrom(length, Vector3.down, out RaycastHit[] hitsDown, out RaycastHit[] hitsDownR);
+                RaycastHit? hitUp = GetClosestUndergroundHit(length, Vector3.up);
+                RaycastHit? hitDown = GetClosestUndergroundHit(length, Vector3.down);
+                RaycastHit? hitLeft = GetClosestUndergroundHit(length, Vector3.left);
+                RaycastHit? hitRight = GetClosestUndergroundHit(length, Vector3.right);
+                RaycastHit? hitForward = GetClosestUndergroundHit(length, Vector3.forward);
+                RaycastHit? hitBack = GetClosestUndergroundHit(length, Vector3.back);
 
-                var hitUp = GetClosestUndergroundHit(hitsUp, hitsUpR, length);
-                var hitDown = GetClosestUndergroundHit(hitsDown, hitsDownR, length);
-
-                RaycastHit?[] hits = { hitUp, hitDown };
+                RaycastHit?[] hits = { hitUp, hitDown, hitLeft, hitRight, hitForward, hitBack };
 
                 var finalHit = hits.Where((hit) => hit.HasValue).OrderBy((hit) => length - hit.Value.distance)
                     .FirstOrDefault();
@@ -139,6 +140,12 @@ namespace MycharMod.SkillStates
             characterMotor.Motor.SetGroundSolvingActivation(true);
 
             return succeeded;
+        }
+
+        private RaycastHit? GetClosestUndergroundHit(float length, Vector3 direction)
+        {
+            ShootRaycastsToAndFrom(length, direction, out RaycastHit[] hits, out RaycastHit[] hitsR);
+            return GetClosestUndergroundHit(hits, hitsR, length);
         }
 
         private void ShootRaycastsToAndFrom(float length, Vector3 direction, out RaycastHit[] hitsUp,
