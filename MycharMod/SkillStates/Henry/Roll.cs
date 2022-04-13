@@ -120,7 +120,15 @@ namespace MycharMod.SkillStates
 
                 RaycastHit?[] hits = { hitUp, hitDown, hitLeft, hitRight, hitForward, hitBack };
 
-                var finalHit = hits.Where((hit) => hit.HasValue).OrderBy((hit) => length - hit.Value.distance)
+                Vector3 velocity = characterMotor.velocity;
+
+                var finalHit = hits.Where((hit) => hit.HasValue)
+                    .OrderBy((hit) =>
+                    {
+                        var alignment = Vector3.Dot((hit.Value.point - transform.position).normalized,
+                            velocity.normalized);
+                        return (length - hit.Value.distance) / (1 + (alignment / 2f));
+                    })
                     .FirstOrDefault();
 
                 if (finalHit.HasValue)
